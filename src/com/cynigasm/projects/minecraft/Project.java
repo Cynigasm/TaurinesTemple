@@ -6,6 +6,8 @@
 
 package com.cynigasm.projects.minecraft;
 
+import java.io.File;
+
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -16,8 +18,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Project extends JavaPlugin {
 	
+	File file_configuration = new File(this.getDataFolder() + File.separator + "config.yml");
+	
 	public void onEnable() {
 		
+		if(!file_configuration.exists()) {
+			this.saveDefaultConfig();
+		}
 	}
 	
 	public void onDisable() {

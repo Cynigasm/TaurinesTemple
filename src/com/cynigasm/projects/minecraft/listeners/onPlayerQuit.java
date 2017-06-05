@@ -10,9 +10,9 @@ public class onPlayerQuit implements Listener {
 	
 	@EventHandler
 	public void onPlayerQuitEvent(PlayerQuitEvent event) {
-		if(Project.playerIsOnline(event.getPlayer().getUniqueId())) {
-			Project.getPlayer(event.getPlayer().getUniqueId()).save();
-			Project.removePlayer(event.getPlayer().getUniqueId());
+		if(Project.playerhandler.containsPlayer(event.getPlayer().getUniqueId())) {
+			Project.playerhandler.getPlayer(event.getPlayer().getUniqueId()).save();
+			Project.playerhandler.removePlayer(event.getPlayer().getUniqueId());
 		}
 	}
 }

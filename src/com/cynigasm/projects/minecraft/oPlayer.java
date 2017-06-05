@@ -18,6 +18,7 @@ public class oPlayer {
 	private YamlConfiguration configuration;
 	private double balance;
 	private Player player;
+	private ArrayList<String> friends;
 	
 	public oPlayer(UUID id) {
 		this.prefix = Project.getPlugin().getConfig().getString("players.default_prefix");
@@ -26,6 +27,7 @@ public class oPlayer {
 		this.playerfile = new File(Project.getPlugin().getDataFolder() + File.separator + "players" + File.separator + id.toString() + ".yml");
 		this.configuration = YamlConfiguration.loadConfiguration(playerfile);
 		this.balance = 0D;
+		this.friends = new ArrayList<String>();
 		if(player.hasPlayedBefore()) {
 			load();
 		}
@@ -98,8 +100,24 @@ public class oPlayer {
 		return balance;
 	}
 
-	public void setBalance(double balance) {
-		this.balance = balance;
+	public void setBalance(double amoune) {
+		this.balance = amoune;
+	}
+	
+	public void addBalance(double amount) {
+		this.balance = this.balance + amount;
+	}
+	
+	public boolean hasBalance(double amount) {
+		if(this.balance >= amount) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public void removeBalance(double amount) {
+		this.balance = this.balance - amount;
 	}
 
 	public Player getPlayer() {
@@ -108,5 +126,21 @@ public class oPlayer {
 
 	public void setPlayer(Player player) {
 		this.player = player;
+	}
+	
+	public void addFriend(String player) {
+		this.friends.add(player.toLowerCase());
+	}
+	
+	public boolean hasFriend(String player) {
+		if(this.friends.contains(player)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public void removeFriend(String player) {
+		this.friends.remove(player.toLowerCase());
 	}
 }

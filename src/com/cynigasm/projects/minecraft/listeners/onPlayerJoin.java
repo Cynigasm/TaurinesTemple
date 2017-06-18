@@ -12,6 +12,7 @@ public class onPlayerJoin implements Listener {
 	public void onPlayerJoinEvent(PlayerJoinEvent event) {
 		if(!Project.playerhandler.containsPlayer(event.getPlayer().getUniqueId())) {
 			Project.playerhandler.addPlayer(event.getPlayer().getUniqueId());
+			
 		}
 	}
 }

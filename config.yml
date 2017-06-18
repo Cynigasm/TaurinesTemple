@@ -1,3 +1,5 @@
 #Config File for Plugin
 players:
-  default_prefix: ALPHA
+  default_prefix: §6§lBETA
+  default_bal: 50
+  default_power: 10

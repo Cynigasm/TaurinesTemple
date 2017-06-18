@@ -1,4 +1,9 @@
-name: Minecraft Project
+name: Minecraft_Project
 author: Cynigasm
 main: com.cynigasm.projects.minecraft.Project
 version: 0.1
+
+commands:
+  social:
+    description: Friends manager commands
+    usage: /friends

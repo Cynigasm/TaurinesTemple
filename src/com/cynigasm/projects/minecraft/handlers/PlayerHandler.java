@@ -14,18 +14,23 @@ public class PlayerHandler {
 	}
 	
 	public boolean containsPlayer(oPlayer player) {
-		if(this.onlineplayers.contains(player)) {
-			return true;
-		} else {
-			return false;
+		boolean answer = false;
+		for(oPlayer p : this.onlineplayers) {
+			if(p.getId() == player.getId()) {
+				answer = true;
+			}
 		}
+		return answer;
 	}
 	
 	public boolean containsPlayer(UUID uuid) {
-		if(getPlayer(uuid) != null) {
-			return true;
+		boolean answer = false;
+		for(oPlayer p : this.onlineplayers) {
+			if(p.getId() == uuid) {
+				answer = true;
+			}
 		}
-		return false;
+		return answer;
 	}
 	
 	public void addPlayer(oPlayer player) {

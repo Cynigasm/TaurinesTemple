@@ -23,8 +23,8 @@ public class randomUtils {
 		
 	}
 	
-	public static ItemStack Skull(String name, int i) {
-		ItemStack skull = new ItemStack(Material.SKULL_ITEM, i, (short) SkullType.PLAYER.ordinal());
+	public static ItemStack Skull(String name, int amount) {
+	ItemStack skull = new ItemStack(Material.SKULL_ITEM, amount, (short) SkullType.PLAYER.ordinal());
         SkullMeta meta = (SkullMeta) skull.getItemMeta();
         
         Player player = Bukkit.getPlayerExact(name);
@@ -35,13 +35,13 @@ public class randomUtils {
         return skull;
 	}
 	
-	public static void Error(String Message) {
-		Bukkit.getLogger().info(MessageUtils.format(Message));
+	public static void Error(String message) {
+		Bukkit.getLogger().severe(MessageUtils.format(message));
 	}
 	
-	public static void NotifyPlayer(String message, Player player) {
-		if(Bukkit.getOnlinePlayers().contains(player)) {
-			player.sendMessage(MessageUtils.format(message));
+	public static void NotifyPlayer(String message, OfflinePlayer player) {
+		if (player.isOnline()) {
+			player.getPlayer().sendMessage(MessageUtils.format(message));
 		}
 	}
     

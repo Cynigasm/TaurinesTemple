@@ -7,34 +7,29 @@
  */
 package com.cynigasm.projects.minecraft.social;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
+import com.cynigasm.projects.minecraft.Project;
+import com.cynigasm.projects.minecraft.oPlayer;
+import com.cynigasm.projects.minecraft.utility.MessageUtils;
+import com.cynigasm.projects.minecraft.utility.randomUtils;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import com.cynigasm.projects.minecraft.Project;
-import com.cynigasm.projects.minecraft.oPlayer;
-import com.cynigasm.projects.minecraft.utility.MessageUtils;
-import com.cynigasm.projects.minecraft.utility.randomUtils;
-
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * @author Cynigasm 
@@ -51,7 +46,7 @@ public class socialListener implements Listener {
 	    Player p = event.getPlayer();
 	 
 	    if(event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
-		    if(p.getItemInHand().equals(socialMenu.getReaper())){
+		    if(p.getInventory().getItemInMainHand().equals(socialMenu.getReaper())){
 		    	if(invis.contains(p.getUniqueId())) {
 		    		invis.remove(p.getUniqueId());
 		    		for(Player player : Bukkit.getOnlinePlayers()) {

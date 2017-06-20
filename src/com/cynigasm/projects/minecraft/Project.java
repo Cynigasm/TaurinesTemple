@@ -6,23 +6,24 @@
 
 package com.cynigasm.projects.minecraft;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
-
+import com.cynigasm.projects.minecraft.empire.EmpireCommands;
 import com.cynigasm.projects.minecraft.commands.socialCommands;
+import com.cynigasm.projects.minecraft.empire.EmpireHandler;
 import com.cynigasm.projects.minecraft.handlers.PlayerHandler;
 import com.cynigasm.projects.minecraft.listeners.onDropEvent;
 import com.cynigasm.projects.minecraft.listeners.onPlayerJoin;
 import com.cynigasm.projects.minecraft.listeners.onPlayerQuit;
+import com.cynigasm.projects.minecraft.menus.MenuEventListener;
 import com.cynigasm.projects.minecraft.social.socialListener;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * @author Cynigasm 
@@ -32,7 +33,7 @@ import com.cynigasm.projects.minecraft.social.socialListener;
 
 public class Project extends JavaPlugin {
 	
-	private static Plugin plugin;
+	private static JavaPlugin plugin;
 	private File file_configuration;
 	public static PlayerHandler playerhandler;
 	
@@ -41,6 +42,7 @@ public class Project extends JavaPlugin {
 		
 		startup();
 		Project.playerhandler = new PlayerHandler();
+		new EmpireHandler();
 		registerEvents();
 		
 		if(!file_configuration.exists()) {
@@ -67,7 +69,10 @@ public class Project extends JavaPlugin {
 		plugin_manager.registerEvents(new onDropEvent(), this);
 		plugin_manager.registerEvents(new socialListener(), this);
 		
+		new MenuEventListener();
+		
 		this.getCommand("social").setExecutor(new socialCommands());
+		new EmpireCommands();
 	}
 	
 	public File getConfigurationFile() {
@@ -78,11 +83,11 @@ public class Project extends JavaPlugin {
 		this.file_configuration = file;
 	}
 
-	public static Plugin getPlugin() {
+	public static JavaPlugin getPlugin() {
 		return plugin;
 	}
 
-	public static void setPlugin(Plugin plugin) {
+	public static void setPlugin(JavaPlugin plugin) {
 		Project.plugin = plugin;
 	}
 	
@@ -94,8 +99,7 @@ public class Project extends JavaPlugin {
 				for(Player player : Bukkit.getOnlinePlayers()) {
 					if(!playerhandler.containsPlayer(player.getUniqueId())) {
 						playerhandler.addPlayer(player.getUniqueId());
-						}
-					
+					}
 				}
 				if(Bukkit.getOnlinePlayers().size() > 0) {
 					playerhandler.savePlayers();

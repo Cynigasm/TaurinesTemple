@@ -6,6 +6,7 @@
 package com.cynigasm.projects.minecraft.utility;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 
 /**
  * @author Cynigasm 
@@ -34,7 +35,24 @@ public class MessageUtils {
 		return message;
 	}
 	
-    public static String format(String format){
-    	return ChatColor.translateAlternateColorCodes('&', format);
+    public static String format(String message){
+    	return ChatColor.translateAlternateColorCodes('&', message);
     }
+    
+    public static String[] format(String[] message) {
+    	for (int i = 0; i < message.length; i++) {
+    		if (message[i] != null) {
+			    message[i] = format(message[i]);
+		    }
+	    }
+	    return message;
+    }
+    
+    public static void sendFormatted(CommandSender recipient, String message) {
+    	recipient.sendMessage(format(message));
+    }
+	
+	public static void sendFormatted(CommandSender recipient, String[] message) {
+		recipient.sendMessage(format(message));
+	}
 }

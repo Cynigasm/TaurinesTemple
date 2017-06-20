@@ -5,14 +5,15 @@
  */
 package com.cynigasm.projects.minecraft.utility;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Trigary
@@ -36,18 +37,19 @@ public class ItemBuilder {
 	}
 	
 	public ItemBuilder setName (String name) {
-		meta.setDisplayName (name);
+		meta.setDisplayName (MessageUtils.format(name));
 		return this;
 	}
 	
 	public ItemBuilder setLore (List<String> lore) {
+		lore.forEach(MessageUtils::format);
 		meta.setLore (lore);
 		return this;
 	}
 	
 	
 	public ItemBuilder setLore (String... lore) {
-		meta.setLore (Arrays.asList (lore));
+		meta.setLore (Arrays.stream(lore).map(MessageUtils::format).collect(Collectors.toList()));
 		return this;
 	}
 	

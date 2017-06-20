@@ -1,5 +1,6 @@
 name: Minecraft_Project
 author: Cynigasm
+authors: [Trigary]
 main: com.cynigasm.projects.minecraft.Project
 version: 0.1
 
@@ -7,3 +8,6 @@ commands:
   social:
     description: Friends manager commands
     usage: /friends
+  clan:
+    description: Clan manager commands
+    usage: §cUsage:§f /clan | /clan create <name>

@@ -36,12 +36,12 @@ public class randomUtils {
 	}
 	
 	public static void Error(String Message) {
-		Bukkit.getLogger().info(MessageUtils.format(Message));
+		Bukkit.getLogger().severe(MessageUtils.format(Message));
 	}
 	
 	public static void NotifyPlayer(String message, Player player) {
-		if(Bukkit.getOnlinePlayers().contains(player)) {
-			player.sendMessage(MessageUtils.format(message));
+		if (player.isOnline()) {
+			player.getPlayer().sendMessage(MessageUtils.format(message));
 		}
 	}
     

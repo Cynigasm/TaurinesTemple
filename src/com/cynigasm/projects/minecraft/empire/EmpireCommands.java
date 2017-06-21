@@ -34,11 +34,7 @@ public class EmpireCommands implements CommandExecutor {
 				Player player = (Player)sender;
 				Empire empire = EmpireHandler.getEmpire(player.getUniqueId());
 				if (empire != null) {
-					if (empire.isLeader(player.getUniqueId())) {
-						new EmpireMenu(player, empire);
-					} else {
-						MessageUtils.sendFormatted(sender, "&cYou aren't the leader of your clan!");
-					}
+					new EmpireMenu(player, empire, 1);
 				} else {
 					MessageUtils.sendFormatted(sender, "&cYou aren't part of a clan!");
 					return false;
@@ -65,8 +61,13 @@ public class EmpireCommands implements CommandExecutor {
 				Player player = (Player)sender;
 				Empire empire = EmpireHandler.getEmpire(player.getUniqueId());
 				if (empire == null) {
-					EmpireHandler.addEmpire(args[1], player.getUniqueId());
-					MessageUtils.sendFormatted(sender, "&eYou have successfully created a clan named: &7" + args[1]);
+					empire = EmpireHandler.getEmpire(args[1]);
+					if (empire == null) {
+						EmpireHandler.addEmpire(args[1], player.getUniqueId());
+						MessageUtils.sendFormatted(sender, "&eYou have successfully created a clan named: &7" + args[1]);
+					} else {
+						MessageUtils.sendFormatted(sender, "&cA clan already exists with that name!");
+					}
 				} else {
 					MessageUtils.sendFormatted(sender, "&cYou are already a member of a clan!");
 				}

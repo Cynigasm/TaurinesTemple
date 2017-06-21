@@ -5,17 +5,20 @@
  */
 package com.cynigasm.projects.minecraft.social;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.inventory.Inventory;
-
+import com.cynigasm.projects.minecraft.empire.Empire;
+import com.cynigasm.projects.minecraft.empire.EmpireHandler;
 import com.cynigasm.projects.minecraft.oPlayer;
 import com.cynigasm.projects.minecraft.utility.ItemBuilder;
 import com.cynigasm.projects.minecraft.utility.MessageUtils;
 import com.cynigasm.projects.minecraft.utility.randomUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.Arrays;
 
 /**
  * @author Cynigasm 
@@ -24,22 +27,34 @@ import com.cynigasm.projects.minecraft.utility.randomUtils;
  */
 public class playerInventory {
 	
-	private oPlayer player;
 	public static String inv_name = MessageUtils.format("&lPlayer Statistics");
 	private Inventory inventory;
-	ItemBuilder ib;
 	
-	public playerInventory(oPlayer player, boolean answer) {
-		this.setPlayer(player);
-		ib = new ItemBuilder(Material.SKULL);
-		ib.setItemStack(randomUtils.Skull(player.getPlayer().getName(), 1));
+	public playerInventory(oPlayer player, boolean friend, boolean viewerCanInviteToClan) {
+		Empire empire = EmpireHandler.getEmpire(player.getId());
 		
 		inventory = Bukkit.getServer().createInventory(null, 27, inv_name);
 		
-		if(answer == true) {
-			friendsInventory();
+		ItemBuilder ib = new ItemBuilder(Material.SKULL);
+		ib.setItemStack(randomUtils.Skull(player.getPlayer().getName(), 1));
+		ib.setName(player.getPlayer().getDisplayName());
+		ib.setLore(Arrays.asList(
+				"&7Ingame Username |&e&l " + player.getPlayer().getName(),
+				"&7Prefix | " + player.getPrefix(),
+				"&7Clan | " + (empire != null ? empire.getName() : "None"),
+				"&7Balance | &e&l" + player.getBalance(),
+				"&7Power | &e&l" + player.getPower(),
+				"&7Death's Touch | "));
+		
+		this.inventory.setItem(inventory.getSize() - 23, ib.getItem());
+		this.inventory.setItem(inventory.getSize() - 9, socialMenu.getBackItem());
+		
+		ItemStack friendItem = friend ? socialMenu.getDeleteItem() : socialMenu.getAddItem();
+		if (empire == null && viewerCanInviteToClan) {
+			inventory.setItem(inventory.getSize() - 6, friendItem);
+			inventory.setItem(inventory.getSize() - 4, getInviteToClanItem());
 		} else {
-			strangerInventory();
+			inventory.setItem(inventory.getSize() - 5, friendItem);
 		}
 	}
 	
@@ -47,46 +62,7 @@ public class playerInventory {
 		return this.inventory;
 	}
 	
-	public void friendsInventory() {
-		List<String> ls = Arrays.asList(
-				MessageUtils.format("&7Ingame Username |&e&l " + player.getPlayer().getName()),
-				MessageUtils.format("&7Prefix | " + player.getPrefix()),
-				MessageUtils.format("&7Clan | "),
-				MessageUtils.format("&7Balance | &e&l" + player.getBalance()),
-				MessageUtils.format("&7Power | &e&l" + player.getPower()),
-				MessageUtils.format("&7Death's Touch | "));
-
-		ib.setName(MessageUtils.format(player.getPlayer().getDisplayName()));
-		ib.setLore(ls);
-		
-		this.inventory.setItem(inventory.getSize() - 23, ib.getItem());
-		this.inventory.setItem(inventory.getSize() - 9, socialMenu.getBackItem());
-		this.inventory.setItem(inventory.getSize() - 5, socialMenu.getDeleteItem());
-	}
-	
-	public void strangerInventory() {
-		
-		List<String> ls = Arrays.asList(
-				MessageUtils.format("&7Ingame Username |&e&l " + player.getPlayer().getName()),
-				MessageUtils.format("&7Prefix | " + player.getPrefix()),
-				MessageUtils.format("&7Clan | "),
-				MessageUtils.format("&7Balance | &e&l" + player.getBalance()),
-				MessageUtils.format("&7Power | &e&l" + player.getPower()),
-				MessageUtils.format("&7Death's Touch | "));
-
-		ib.setName(MessageUtils.format(player.getPlayer().getDisplayName()));
-		ib.setLore(ls);
-		
-		this.inventory.setItem(inventory.getSize() - 23, ib.getItem());
-		this.inventory.setItem(inventory.getSize() - 9, socialMenu.getBackItem());
-		this.inventory.setItem(inventory.getSize() - 5, socialMenu.getAddItem());
-	}
-
-	public oPlayer getPlayer() {
-		return player;
-	}
-
-	public void setPlayer(oPlayer player) {
-		this.player = player;
+	public static ItemStack getInviteToClanItem() {
+		return new ItemBuilder(Material.IRON_CHESTPLATE).addEnchantment(Enchantment.DURABILITY, 1).addItemFlags(ItemFlag.HIDE_ENCHANTS).setName("&a&lInvite to clan").getItem();
 	}
 }

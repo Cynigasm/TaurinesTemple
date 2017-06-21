@@ -5,11 +5,15 @@
  */
 package com.cynigasm.projects.minecraft.utility;
 
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionType;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,48 +27,47 @@ import java.util.stream.Collectors;
 
 public class ItemBuilder {
 	
-	public ItemBuilder (Material material) {
-		item = new ItemStack (material);
-		meta = item.getItemMeta ();
+	public ItemBuilder(Material material) {
+		item = new ItemStack(material);
+		meta = item.getItemMeta();
 	}
 	
 	private ItemStack item;
 	private ItemMeta meta;
 	
-	public ItemStack getItem () {
-		item.setItemMeta (meta);
+	public ItemStack getItem() {
+		item.setItemMeta(meta);
 		return item;
 	}
 	
-	public ItemBuilder setName (String name) {
-		meta.setDisplayName (MessageUtils.format(name));
+	public ItemBuilder setName(String name) {
+		meta.setDisplayName(MessageUtils.format(name));
 		return this;
 	}
 	
-	public ItemBuilder setLore (List<String> lore) {
-		lore.forEach(MessageUtils::format);
-		meta.setLore (lore);
+	public ItemBuilder setLore(List<String> lore) {
+		meta.setLore(lore.stream().map(MessageUtils::format).collect(Collectors.toList()));
 		return this;
 	}
 	
 	
-	public ItemBuilder setLore (String... lore) {
-		meta.setLore (Arrays.stream(lore).map(MessageUtils::format).collect(Collectors.toList()));
+	public ItemBuilder setLore(String... lore) {
+		meta.setLore(Arrays.stream(lore).map(MessageUtils::format).collect(Collectors.toList()));
 		return this;
 	}
 	
-	public ItemBuilder setAmount (int amount) {
-		item.setAmount (amount);
+	public ItemBuilder setAmount(int amount) {
+		item.setAmount(amount);
 		return this;
 	}
 	
-	public ItemBuilder setDurability (int durability) {
-		item.setDurability ((short)durability);
+	public ItemBuilder setDurability(int durability) {
+		item.setDurability((short)durability);
 		return this;
 	}
 	
-	public ItemBuilder addEnchantment (Enchantment enchantment, int level) {
-		meta.addEnchant (enchantment, level, true);
+	public ItemBuilder addEnchantment(Enchantment enchantment, int level) {
+		meta.addEnchant(enchantment, level, true);
 		return this;
 	}
 	
@@ -74,8 +77,28 @@ public class ItemBuilder {
 		return this;
 	}
 	
-	public ItemBuilder addItemFlags (ItemFlag... flags) {
-		meta.addItemFlags (flags);
+	public ItemBuilder addItemFlags(ItemFlag... flags) {
+		meta.addItemFlags(flags);
+		return this;
+	}
+	
+	
+	
+	public ItemBuilder setPotionData(PotionType type) {
+		PotionMeta potionMeta = (PotionMeta)meta;
+		potionMeta.setBasePotionData(new PotionData(type));
+		return this;
+	}
+	
+	public ItemBuilder setPotionData(PotionType type, boolean extended, boolean upgraded) {
+		PotionMeta potionMeta = (PotionMeta)meta;
+		potionMeta.setBasePotionData(new PotionData(type, extended, upgraded));
+		return this;
+	}
+	
+	public ItemBuilder setPotionColor(Color color) {
+		PotionMeta potionMeta = (PotionMeta)meta;
+		potionMeta.setColor(color);
 		return this;
 	}
 }

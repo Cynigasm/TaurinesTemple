@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 
 public class MenuEventListener implements Listener {
@@ -27,6 +28,13 @@ public class MenuEventListener implements Listener {
 	private void onInventoryDrag(InventoryDragEvent event) {
 		if (event.getInventory().getHolder() instanceof MenuInventoryHolder) {
 			((MenuInventoryHolder)event.getInventory().getHolder()).onDrag((Player)event.getWhoClicked(), event);
+		}
+	}
+	
+	@EventHandler (ignoreCancelled = true)
+	private void onInventoryClose(InventoryCloseEvent event) {
+		if (event.getInventory().getHolder() instanceof MenuInventoryHolder) {
+			((MenuInventoryHolder)event.getInventory().getHolder()).onClose((Player)event.getPlayer(), event);
 		}
 	}
 }

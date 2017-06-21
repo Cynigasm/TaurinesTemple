@@ -6,6 +6,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -58,11 +60,15 @@ public class YMLConfig extends YamlConfiguration {
 	}
 	
 	public void set(String path, Set<?> set) {
-		set(path, set.stream().collect(Collectors.toList()));
+		set(path, new ArrayList<>(set));
 	}
 	
 	public void set(String path, UUID id) {
-		set(path, id.toString());
+		if (id != null) {
+			set(path, id.toString());
+		} else {
+			set(path, (Object)null);
+		}
 	}
 	
 	public Set<UUID> getUUIDSet(String path) {
@@ -70,10 +76,15 @@ public class YMLConfig extends YamlConfiguration {
 	}
 	
 	public Set<String> getStringSet(String path) {
-		return getStringList(path).stream().collect(Collectors.toSet());
+		return new HashSet<>(getStringList(path));
 	}
 	
 	public UUID getUUID(String path) {
-		return UUID.fromString(getString(path));
+		String id = getString(path);
+		if (id != null) {
+			return UUID.fromString(id);
+		} else {
+			return null;
+		}
 	}
 }

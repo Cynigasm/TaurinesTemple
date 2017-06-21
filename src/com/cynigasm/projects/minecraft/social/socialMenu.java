@@ -5,9 +5,10 @@
  */
 package com.cynigasm.projects.minecraft.social;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
+import com.cynigasm.projects.minecraft.oPlayer;
+import com.cynigasm.projects.minecraft.utility.ItemBuilder;
+import com.cynigasm.projects.minecraft.utility.MessageUtils;
+import com.cynigasm.projects.minecraft.utility.randomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -16,10 +17,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
-import com.cynigasm.projects.minecraft.oPlayer;
-import com.cynigasm.projects.minecraft.utility.ItemBuilder;
-import com.cynigasm.projects.minecraft.utility.MessageUtils;
-import com.cynigasm.projects.minecraft.utility.randomUtils;
+import java.util.ArrayList;
 
 /**
  * @author Cynigasm 
@@ -32,34 +30,33 @@ public class socialMenu {
 	private ItemStack item_friends;
 	private ItemStack item_requests;
 	private ItemStack item_blocked;
-	private ItemBuilder ib;
 	private oPlayer player;
 	private ArrayList<ItemStack> onlineplayers;
 	public static String inv_name = MessageUtils.format("&lSOCIAL MANAGEMENT");
 	
 	public socialMenu(oPlayer player) {
-		 onlineplayers = new ArrayList<ItemStack>();
-		 this.setPlayer(player);
-		 this.inv = Bukkit.createInventory(null, generateInventorySize(), inv_name);
-		 organiseFriendList();
-		 
-		 ib = new ItemBuilder(Material.INK_SACK);
-		 ib.setDurability((short) 2);
-		 ib.setName(MessageUtils.format("&a&lFRIENDS LIST"));
-		 ib.setLore(MessageUtils.format("&fYou currently have &a&l" + player.getOnlineFriends() + "&f friends online."));
-		 this.item_friends = ib.getItem();
-		 
-		 ib = new ItemBuilder(Material.INK_SACK);
-		 ib.setDurability((short) 11);
-		 ib.setName(MessageUtils.format("&e&lFRIEND REQUESTS"));
-		 ib.setLore(MessageUtils.format("&fYou currently have &e&l" + player.getFriendRequests().size() + "&f friend requests."));
-		 this.item_requests = ib.getItem();
-		 
-		 ib = new ItemBuilder(Material.INK_SACK);
-		 ib.setDurability((short) 1);
-		 ib.setName(MessageUtils.format("&c&lBLOCK LIST"));
-		 ib.setLore(MessageUtils.format("&fYou have blocked &c&l" + player.getBlocklist().size() + "&f players."));
-		 this.item_blocked = ib.getItem();
+		onlineplayers = new ArrayList<>();
+		this.setPlayer(player);
+		this.inv = Bukkit.createInventory(null, generateInventorySize(), inv_name);
+		organiseFriendList();
+		
+		ItemBuilder ib = new ItemBuilder(Material.INK_SACK);
+		ib.setDurability((short)2);
+		ib.setName(MessageUtils.format("&a&lFRIENDS LIST"));
+		ib.setLore(MessageUtils.format("&fYou currently have &a&l" + player.getOnlineFriends() + "&f friends online."));
+		this.item_friends = ib.getItem();
+		
+		ib = new ItemBuilder(Material.INK_SACK);
+		ib.setDurability((short)11);
+		ib.setName(MessageUtils.format("&e&lFRIEND REQUESTS"));
+		ib.setLore(MessageUtils.format("&fYou currently have &e&l" + player.getFriendRequests().size() + "&f friend requests."));
+		this.item_requests = ib.getItem();
+		
+		ib = new ItemBuilder(Material.INK_SACK);
+		ib.setDurability((short)1);
+		ib.setName(MessageUtils.format("&c&lBLOCK LIST"));
+		ib.setLore(MessageUtils.format("&fYou have blocked &c&l" + player.getBlocklist().size() + "&f players."));
+		this.item_blocked = ib.getItem();
 	}
 	
 	public Inventory getInventory() {
@@ -85,20 +82,20 @@ public class socialMenu {
 		int x = 18;
 		for(ItemStack item : this.onlineplayers) {
 			this.inv.setItem(x, item);
-			x=x+1;
+			x++;
 		}
 		return this.inv;	
 	}
 	
 	public void organiseFriendList() {
 		ArrayList<String> friendslist;
-		friendslist = new ArrayList<String>();
+		friendslist = new ArrayList<>();
 		for(Player player : Bukkit.getServer().getOnlinePlayers()) {
 			if(!player.getName().equals(this.player.getPlayer().getName())) {
 				friendslist.add(player.getName());
 			}
 		}
-		Collections.sort(friendslist, String.CASE_INSENSITIVE_ORDER);
+		friendslist.sort(String.CASE_INSENSITIVE_ORDER);
 		
 		
 		
@@ -112,9 +109,9 @@ public class socialMenu {
 	
 	public int generateInventorySize() {
 		int i = 27;
-			for(int x = 9; x <= Bukkit.getServer().getOnlinePlayers().size() -1; x=x+9) {
-				i = i+x;
-			}
+		for(int x = 9; x <= Bukkit.getServer().getOnlinePlayers().size() -1; x += 9) {
+			i += x;
+		}
 		return i;
 	}
 
@@ -127,39 +124,32 @@ public class socialMenu {
 	}
 	
 	public static ItemStack getBackItem() {
-		ItemBuilder ib;
-		ib = new ItemBuilder(Material.WOOD_DOOR);
+		ItemBuilder ib = new ItemBuilder(Material.WOOD_DOOR);
 		ib.setName(MessageUtils.format("&f&lBACK"));
-		return  ib.getItem();
+		return ib.getItem();
 	}
 	
 	public static ItemStack getAddItem() {
-		ItemStack stack = null;
 		ItemBuilder ib = new ItemBuilder(Material.SLIME_BALL);
 		ib.setName(MessageUtils.format("&a&lSend friend request"));
 		ib.addEnchantment(Enchantment.ARROW_KNOCKBACK, 1);
 		ib.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-		stack = ib.getItem();
-		return stack;
+		return ib.getItem();
 	}
 	
 	public static ItemStack getDeleteItem() {
-		ItemStack stack = null;
 		ItemBuilder ib = new ItemBuilder(Material.TNT);
 		ib.setName(MessageUtils.format("&c&lUnfriend this player"));
 		ib.addEnchantment(Enchantment.ARROW_KNOCKBACK, 1);
 		ib.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-		stack = ib.getItem();
-		return stack;
+		return ib.getItem();
 	}
 	
 	public static ItemStack getReaper() {
-		ItemStack stack = null;
 		ItemBuilder ib = new ItemBuilder(Material.POTATO_ITEM);
 		ib.setName(MessageUtils.format("&e&lGOD'S CROP"));
 		ib.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, Enchantment.PROTECTION_ENVIRONMENTAL.getMaxLevel());
 		ib.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-		stack = ib.getItem();
-		return stack;
+		return ib.getItem();
 	}
 }

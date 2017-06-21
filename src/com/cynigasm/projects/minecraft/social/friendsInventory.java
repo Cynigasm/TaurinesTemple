@@ -5,18 +5,16 @@
  */
 package com.cynigasm.projects.minecraft.social;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.UUID;
-
+import com.cynigasm.projects.minecraft.oPlayer;
+import com.cynigasm.projects.minecraft.utility.MessageUtils;
+import com.cynigasm.projects.minecraft.utility.randomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import com.cynigasm.projects.minecraft.oPlayer;
-import com.cynigasm.projects.minecraft.utility.MessageUtils;
-import com.cynigasm.projects.minecraft.utility.randomUtils;
+import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * @author Cynigasm 
@@ -34,8 +32,8 @@ public class friendsInventory {
 	
 	public friendsInventory(oPlayer player) {
 		this.player = player;
-		offlineplayers = new ArrayList<ItemStack>();
-		onlineplayers = new ArrayList<ItemStack>();
+		offlineplayers = new ArrayList<>();
+		onlineplayers = new ArrayList<>();
 		inventory = Bukkit.createInventory(null,  generateInventorySize(), inv_name);
 	}
 	
@@ -67,13 +65,13 @@ public class friendsInventory {
 	@SuppressWarnings("deprecation")
 	public void organiseFriendList() {
 		ArrayList<String> friendslist;
-		friendslist = new ArrayList<String>();
+		friendslist = new ArrayList<>();
 		for(UUID id : player.getFriends()) {
 			OfflinePlayer p = Bukkit.getOfflinePlayer(id);
 			Bukkit.getLogger().info(p.getName());
 			friendslist.add(p.getName());
 		}
-		Collections.sort(friendslist, String.CASE_INSENSITIVE_ORDER);
+		friendslist.sort(String.CASE_INSENSITIVE_ORDER);
 		
 		for(String string : friendslist) {
 			OfflinePlayer p = Bukkit.getOfflinePlayer(string);
@@ -88,11 +86,11 @@ public class friendsInventory {
 	public int generateInventorySize() {
 		int i = 18;
 		if(!player.getFriends().isEmpty()) {
-			for(int x = 9; x <= player.getFriends().size(); x=x+9) {
-				i = i+x;
+			for(int x = 9; x <= player.getFriends().size(); x += 9) {
+				i += x;
 			}
 		} else {
-			i = i + 9;
+			i += 9;
 		}
 		return i;
 	}

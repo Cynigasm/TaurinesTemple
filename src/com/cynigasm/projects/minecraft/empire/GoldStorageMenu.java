@@ -19,42 +19,51 @@ import org.bukkit.inventory.ItemStack;
 public class GoldStorageMenu extends MenuInventoryHolder {
 	public GoldStorageMenu(Player player, Empire empire) {
 		this.empire = empire;
-		Inventory inventory = Bukkit.createInventory(this, 27, MessageUtils.format("&lGOLD STORAGE"));
-		inventory.setContents(ITEMS);
+		Inventory inventory = Bukkit.createInventory(this, 27, MessageUtils.format("&lTREASURY"));
+		inventory.setItem(18, EmpireMenu.getBackItem());
 		setBalanceItem(inventory);
+		
+		if (empire.isOwner(player.getUniqueId()) || empire.isAdmin(player.getUniqueId())) {
+			setTransferItems(inventory, WITHDRAW_ITEMS, 2);
+			setTransferItems(inventory, DEPOSIT_ITEMS, 6);
+		} else {
+			setTransferItems(inventory, DEPOSIT_ITEMS, 4);
+		}
+		
 		player.openInventory(inventory);
 	}
 	
 	private final Empire empire;
-	private final static ItemStack[] ITEMS;
+	private final static ItemStack[][] WITHDRAW_ITEMS;
+	private final static ItemStack[][] DEPOSIT_ITEMS;
 	
 	static {
-		ITEMS = new ItemStack[27];
-		ITEMS[18] = EmpireMenu.getBackItem();
+		WITHDRAW_ITEMS = new ItemStack[3][3];
+		DEPOSIT_ITEMS = new ItemStack[3][3];
 		
-		ITEMS[2] = getItem(Material.GOLD_BLOCK, 1, true, 10000);
-		ITEMS[3] = getItem(Material.GOLD_BLOCK, 10, true, 100000);
-		ITEMS[4] = getItem(Material.GOLD_BLOCK, 50, true, 500000);
+		WITHDRAW_ITEMS[0][0] = getItem(Material.GOLD_BLOCK, 1, true, 10000);
+		WITHDRAW_ITEMS[0][1] = getItem(Material.GOLD_BLOCK, 10, true, 100000);
+		WITHDRAW_ITEMS[0][2] = getItem(Material.GOLD_BLOCK, 50, true, 500000);
 		
-		ITEMS[6] = getItem(Material.IRON_BLOCK, 1, false, 10000);
-		ITEMS[7] = getItem(Material.IRON_BLOCK, 10, false, 100000);
-		ITEMS[8] = getItem(Material.IRON_BLOCK, 50, false, 500000);
+		DEPOSIT_ITEMS[0][0] = getItem(Material.IRON_BLOCK, 1, false, 10000);
+		DEPOSIT_ITEMS[0][1] = getItem(Material.IRON_BLOCK, 10, false, 100000);
+		DEPOSIT_ITEMS[0][2] = getItem(Material.IRON_BLOCK, 50, false, 500000);
 		
-		ITEMS[11] = getItem(Material.GOLD_INGOT, 1, true, 100);
-		ITEMS[12] = getItem(Material.GOLD_INGOT, 10, true, 1000);
-		ITEMS[13] = getItem(Material.GOLD_INGOT, 50, true, 5000);
+		WITHDRAW_ITEMS[1][0] = getItem(Material.GOLD_INGOT, 1, true, 100);
+		WITHDRAW_ITEMS[1][1] = getItem(Material.GOLD_INGOT, 10, true, 1000);
+		WITHDRAW_ITEMS[1][2] = getItem(Material.GOLD_INGOT, 50, true, 5000);
 		
-		ITEMS[15] = getItem(Material.IRON_INGOT, 1, false, 100);
-		ITEMS[16] = getItem(Material.IRON_INGOT, 10, false, 1000);
-		ITEMS[17] = getItem(Material.IRON_INGOT, 50, false, 5000);
+		DEPOSIT_ITEMS[1][0] = getItem(Material.IRON_INGOT, 1, false, 100);
+		DEPOSIT_ITEMS[1][1] = getItem(Material.IRON_INGOT, 10, false, 1000);
+		DEPOSIT_ITEMS[1][2] = getItem(Material.IRON_INGOT, 50, false, 5000);
 		
-		ITEMS[20] = getItem(Material.GOLD_NUGGET, 1, true, 1);
-		ITEMS[21] = getItem(Material.GOLD_NUGGET, 10, true, 10);
-		ITEMS[22] = getItem(Material.GOLD_NUGGET, 50, true, 50);
+		WITHDRAW_ITEMS[2][0] = getItem(Material.GOLD_NUGGET, 1, true, 1);
+		WITHDRAW_ITEMS[2][1] = getItem(Material.GOLD_NUGGET, 10, true, 10);
+		WITHDRAW_ITEMS[2][2] = getItem(Material.GOLD_NUGGET, 50, true, 50);
 		
-		ITEMS[24] = getItem(Material.IRON_NUGGET, 1, false, 1);
-		ITEMS[25] = getItem(Material.IRON_NUGGET, 10, false, 10);
-		ITEMS[26] = getItem(Material.IRON_NUGGET, 50, false, 50);
+		DEPOSIT_ITEMS[2][0] = getItem(Material.IRON_NUGGET, 1, false, 1);
+		DEPOSIT_ITEMS[2][1] = getItem(Material.IRON_NUGGET, 10, false, 10);
+		DEPOSIT_ITEMS[2][2] = getItem(Material.IRON_NUGGET, 50, false, 50);
 	}
 	
 	
@@ -65,7 +74,7 @@ public class GoldStorageMenu extends MenuInventoryHolder {
 		if (menuWasClicked) {
 			if (event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {
 				if (event.getCurrentItem().getType() == Material.WOOD_DOOR) {
-					new EmpireMenu(player, empire);
+					new EmpireMenu(player, empire, 1);
 				} else if (event.getCurrentItem().getType() != Material.CHEST) {
 					int value = getValue(event.getCurrentItem());
 					oPlayer oPlayer = Project.playerhandler.getPlayer(player.getUniqueId());
@@ -95,6 +104,15 @@ public class GoldStorageMenu extends MenuInventoryHolder {
 	}
 	
 	
+	
+	private void setTransferItems(Inventory inventory, ItemStack[][] items, int offset) {
+		for (int i = 0; i < items.length; i++) {
+			ItemStack[] array = items[i];
+			for (int j = 0; j < array.length; j++) {
+				inventory.setItem(i * 9 + offset + j, array[j]);
+			}
+		}
+	}
 	
 	private void setBalanceItem(Inventory inventory) {
 		inventory.setItem(0, new ItemBuilder(Material.CHEST)

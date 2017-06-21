@@ -8,6 +8,8 @@
 package com.cynigasm.projects.minecraft.social;
 
 import com.cynigasm.projects.minecraft.Project;
+import com.cynigasm.projects.minecraft.empire.Empire;
+import com.cynigasm.projects.minecraft.empire.EmpireHandler;
 import com.cynigasm.projects.minecraft.oPlayer;
 import com.cynigasm.projects.minecraft.utility.MessageUtils;
 import com.cynigasm.projects.minecraft.utility.randomUtils;
@@ -78,6 +80,8 @@ public class socialListener implements Listener {
 			if(event.getWhoClicked() instanceof Player) {
 				Player clicker = (Player) event.getWhoClicked();
 				oPlayer player = Project.playerhandler.getPlayer(clicker.getUniqueId());
+				Empire empire = EmpireHandler.getEmpire(clicker.getUniqueId());
+				boolean clickerCanInviteToClan = empire != null && empire.isOwner(clicker.getUniqueId());
 				
 				if(inv.getName().equalsIgnoreCase(socialMenu.inv_name)) {
 					event.setCancelled(true);
@@ -111,15 +115,15 @@ public class socialListener implements Listener {
 										p = target;
 									}
 								}
-								if(p.equals(null)) {
+								if(p == null) {
 									player.getPlayer().openInventory(new socialMenu(Project.playerhandler.getPlayer(player.getId())).getInventory());
 								} else {
 									oPlayer target_player = Project.playerhandler.getPlayer(p.getUniqueId());
 									player.getPlayer().closeInventory();
 									if(player.hasFriend(target_player.getId())) {
-										player.getPlayer().openInventory(new playerInventory(target_player, true).getInventory());
+										player.getPlayer().openInventory(new playerInventory(target_player, true, clickerCanInviteToClan).getInventory());
 									} else {
-										player.getPlayer().openInventory(new playerInventory(target_player, false).getInventory());
+										player.getPlayer().openInventory(new playerInventory(target_player, false, clickerCanInviteToClan).getInventory());
 									}
 								}
 							}
@@ -212,6 +216,30 @@ public class socialListener implements Listener {
 										}
 									}
 								}
+							} else if (item.equals(playerInventory.getInviteToClanItem()) && clickerCanInviteToClan) {
+								ItemStack itemstack = inv.getItem(inv.getSize() - 23);
+								
+								if(itemstack.getType().equals(Material.SKULL_ITEM)) {
+									Player target_player;
+									target_player = null;
+									if(itemstack.getItemMeta().hasDisplayName()) {
+										String[] item_lore_name = itemstack.getItemMeta().getLore().get(0).split(" ");
+										String sorted_name = ChatColor.stripColor(item_lore_name[3]);
+										for(Player o : Bukkit.getOnlinePlayers()) {
+											if(o.getName().equalsIgnoreCase(sorted_name)) {
+												target_player = o;
+											}
+										}
+										if(target_player != null) {
+											if (empire.addMember(target_player.getUniqueId())) {
+												oPlayer oPlayer = Project.playerhandler.getPlayer(target_player.getUniqueId());
+												player.getPlayer().openInventory(new playerInventory(oPlayer, player.hasFriend(target_player.getUniqueId()), true).getInventory());
+											} else {
+												randomUtils.NotifyPlayer("Your clan has reached its max. member capacity!", clicker);
+											}
+										}
+									}
+								}
 							}
 						} else if (inv.getName().equalsIgnoreCase(friendsInventory.inv_name)) {
 							if(inv.getItem(clicked) != null) {
@@ -222,15 +250,15 @@ public class socialListener implements Listener {
 											p = target;
 										}
 									}
-									if(p.equals(null)) {
+									if(p == null) {
 										player.getPlayer().openInventory(new socialMenu(Project.playerhandler.getPlayer(player.getId())).getInventory());
 									} else {
 										oPlayer target_player = Project.playerhandler.getPlayer(p.getUniqueId());
 										player.getPlayer().closeInventory();
 										if(player.hasFriend(target_player.getId())) {
-											player.getPlayer().openInventory(new playerInventory(target_player, true).getInventory());
+											player.getPlayer().openInventory(new playerInventory(target_player, true, clickerCanInviteToClan).getInventory());
 										} else {
-											player.getPlayer().openInventory(new playerInventory(target_player, false).getInventory());
+											player.getPlayer().openInventory(new playerInventory(target_player, false, clickerCanInviteToClan).getInventory());
 										}
 									}
 								}

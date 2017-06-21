@@ -2,7 +2,11 @@ package com.cynigasm.projects.minecraft.empire;
 
 import com.cynigasm.projects.minecraft.Project;
 import com.cynigasm.projects.minecraft.oPlayer;
+import com.cynigasm.projects.minecraft.utility.MessageUtils;
 import com.cynigasm.projects.minecraft.utility.YMLConfig;
+import com.cynigasm.projects.minecraft.utility.randomUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 
 import java.io.File;
 import java.util.HashSet;
@@ -10,12 +14,14 @@ import java.util.Set;
 import java.util.UUID;
 
 public class Empire {
-	public Empire(String name, UUID leader) {
+	public Empire(String name, UUID owner) {
 		config = new YMLConfig(Project.getPlugin(), "empires" + File.separator + name + ".yml");
 		this.name = name;
 		level = 1;
-		this.leader = leader;
+		this.owner = owner;
+		admin = null;
 		members = new HashSet<>();
+		members.add(owner);
 		gold = 0;
 		allies = new HashSet<>();
 		enemies = new HashSet<>();
@@ -24,7 +30,8 @@ public class Empire {
 	private final YMLConfig config;
 	private final String name;
 	private int level;
-	private UUID leader;
+	private UUID owner;
+	private UUID admin;
 	private final Set<UUID> members;
 	private double gold;
 	private final Set<String> allies;
@@ -41,44 +48,101 @@ public class Empire {
 		return level;
 	}
 	
-	public void increaseLevel() {
-		level++;
-	}
-	
-	
-	
-	public UUID getLeader() {
-		return leader;
-	}
-	
-	public boolean isLeader(UUID leader) {
-		return this.leader.equals(leader);
-	}
-	
-	public boolean makeLeader(UUID member) {
-		if (members.remove(member)) {
-			members.add(leader);
-			leader = member;
+	public boolean increaseLevel() {
+		if (level < 10) { //This check is probably not needed
+			level++;
 			return true;
 		} else {
 			return false;
 		}
 	}
 	
-	public boolean isMember(UUID memberOrLeader) {
-		return members.contains(memberOrLeader) || isLeader(memberOrLeader);
+	
+	
+	public UUID getOwner() {
+		return owner;
 	}
 	
-	public boolean addMember(UUID member) {
-		return members.add(member);
+	public boolean isOwner(UUID player) {
+		return this.owner.equals(player);
+	}
+	
+	public boolean makeOwner(UUID member) {
+		if (isMember(member) && !isOwner(member)) {
+			owner = member;
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	
+	
+	public UUID getAdmin() {
+		return admin;
+	}
+	
+	public boolean isAdmin(UUID player) {
+		return this.admin != null && this.admin.equals(player);
+	}
+	
+	public boolean makeAdmin(UUID member) {
+		if (isMember(member) && !isAdmin(member) && !isOwner(member)) {
+			admin = member;
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	
+	
+	public Set<UUID> getMembers() {
+		return new HashSet<>(members);
+	}
+	
+	public boolean isMember(UUID player) {
+		return members.contains(player);
+	}
+	
+	public boolean addMember(UUID player) {
+		if (getMemberCount() < getMaxMemberCount() && EmpireHandler.getEmpire(player) == null) {
+			if (members.add(player)) {
+				broadcastToMembers(randomUtils.getPlayerName(Bukkit.getOfflinePlayer(player), "") + "&e has joined the clan!");
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
 	}
 	
 	public boolean removeMember(UUID member) {
-		return members.remove(member);
+		if (members.remove(member)) {
+			broadcastToMembers(randomUtils.getPlayerName(Bukkit.getOfflinePlayer(member), "") + "&e has left the clan!");
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	public int getMemberCount() {
-		return members.size() + 1;
+		return members.size();
+	}
+	
+	public int getMaxMemberCount() {
+		return level * 5;
+	}
+	
+	public void broadcastToMembers(String message) {
+		message = MessageUtils.format(message);
+		for (UUID id : members) {
+			OfflinePlayer player = Bukkit.getOfflinePlayer(id);
+			if (player.isOnline()) {
+				player.getPlayer().sendMessage(message);
+			}
+		}
 	}
 	
 	
@@ -117,6 +181,14 @@ public class Empire {
 	
 	
 	
+	public Set<String> getAllies() {
+		return new HashSet<>(allies);
+	}
+	
+	public Set<String> getEnemies() {
+		return new HashSet<>(enemies);
+	}
+	
 	public boolean isAlly(String empire) {
 		return allies.contains(empire);
 	}
@@ -125,20 +197,76 @@ public class Empire {
 		return enemies.contains(empire);
 	}
 	
-	public boolean addAlly(String empire) {
-		return allies.add(empire);
+	public boolean addAlly(Empire empire) {
+		if (allies.add(empire.getName())) {
+			empire.addAlly(name);
+			broadcastToMembers("&2Your clan is now the ally of " + empire.getName());
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
-	public boolean addEnemy(String empire) {
-		return enemies.add(empire);
+	private void addAlly(String empire) {
+		allies.add(empire);
+		broadcastToMembers("&2Your clan is now the ally of " + empire);
 	}
 	
-	public boolean removeAlly(String empire) {
-		return allies.remove(empire);
+	public boolean addEnemy(Empire empire) {
+		if (enemies.add(empire.getName())) {
+			empire.addEnemy(name);
+			broadcastToMembers("&cYour clan is now the enemy of " + empire.getName());
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
-	public boolean removeEnemy(String empire) {
-		return enemies.remove(empire);
+	private void addEnemy(String empire) {
+		enemies.add(empire);
+		broadcastToMembers("&cYour clan is now the enemy of " + empire);
+	}
+	
+	public boolean removeAlly(Empire empire) {
+		if (allies.remove(empire.getName())) {
+			empire.removeAlly(name);
+			broadcastToMembers("&cYour clan is no longer the ally of " + empire.getName());
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	private void removeAlly(String empire) {
+		allies.remove(empire);
+		broadcastToMembers("&cYour clan is no longer the ally of " + empire);
+	}
+	
+	public boolean removeEnemy(Empire empire) {
+		if (enemies.remove(empire.getName())) {
+			empire.removeEnemy(name);
+			broadcastToMembers("&2Your clan is no longer the enemy of " + empire.getName());
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	private void removeEnemy(String empire) {
+		enemies.remove(empire);
+		broadcastToMembers("&2Your clan is no longer the enemy of " + empire);
+	}
+	
+	
+	
+	public void disband() {
+		//members.clear();
+		for (String name : allies) {
+			EmpireHandler.getEmpire(name).removeAlly(name);
+		}
+		for (String name : enemies) {
+			EmpireHandler.getEmpire(name).removeEnemy(name);
+		}
 	}
 	
 	
@@ -146,7 +274,8 @@ public class Empire {
 	public void save () {
 		config.set("name", name);
 		config.set("level", level);
-		config.set("leader", leader);
+		config.set("owner", owner);
+		config.set("admin", admin);
 		config.setUUIDSet("members", members);
 		config.set("gold", gold);
 		config.set("allies", allies);
@@ -159,7 +288,8 @@ public class Empire {
 		config.load();
 		this.name = config.getString("name");
 		level = config.getInt("level");
-		leader = config.getUUID("leader");
+		owner = config.getUUID("owner");
+		admin = config.getUUID("admin");
 		members = config.getUUIDSet("members");
 		gold = config.getDouble("gold");
 		allies = config.getStringSet("allies");

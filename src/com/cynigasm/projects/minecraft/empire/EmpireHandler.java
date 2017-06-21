@@ -58,4 +58,14 @@ public class EmpireHandler {
 	public static void addEmpire(String name, UUID leader) {
 		instance.empires.add(new Empire(name, leader));
 	}
+	
+	public static void removeEmpire(Empire empire) {
+		instance.empires.remove(empire);
+		File file = new File(Project.getPlugin().getDataFolder() + File.separator + "empires" + File.separator + empire.getName() + ".yml");
+		if (file.exists()) {
+			//noinspection ResultOfMethodCallIgnored
+			file.delete();
+		}
+		empire.disband();
+	}
 }

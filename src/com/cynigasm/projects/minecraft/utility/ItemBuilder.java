@@ -26,10 +26,14 @@ import java.util.stream.Collectors;
  */
 
 public class ItemBuilder {
-	
 	public ItemBuilder(Material material) {
 		item = new ItemStack(material);
 		meta = item.getItemMeta();
+	}
+	
+	public ItemBuilder(ItemStack item) {
+		this.item = item;
+		this.meta = item.getItemMeta();
 	}
 	
 	private ItemStack item;
@@ -68,12 +72,6 @@ public class ItemBuilder {
 	
 	public ItemBuilder addEnchantment(Enchantment enchantment, int level) {
 		meta.addEnchant(enchantment, level, true);
-		return this;
-	}
-	
-	public ItemBuilder setItemStack(ItemStack itemstack) {
-		item = itemstack;
-		meta = itemstack.getItemMeta();
 		return this;
 	}
 	

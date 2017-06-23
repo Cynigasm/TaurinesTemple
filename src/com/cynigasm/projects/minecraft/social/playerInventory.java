@@ -35,8 +35,7 @@ public class playerInventory {
 		
 		inventory = Bukkit.getServer().createInventory(null, 27, inv_name);
 		
-		ItemBuilder ib = new ItemBuilder(Material.SKULL);
-		ib.setItemStack(randomUtils.Skull(player.getPlayer().getName(), 1));
+		ItemBuilder ib = new ItemBuilder(randomUtils.Skull(player.getPlayer().getName(), 1));
 		ib.setName(player.getPlayer().getDisplayName());
 		ib.setLore(Arrays.asList(
 				"&7Ingame Username |&e&l " + player.getPlayer().getName(),

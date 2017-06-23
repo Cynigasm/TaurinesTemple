@@ -14,6 +14,7 @@ import com.cynigasm.projects.minecraft.listeners.onDropEvent;
 import com.cynigasm.projects.minecraft.listeners.onPlayerJoin;
 import com.cynigasm.projects.minecraft.listeners.onPlayerQuit;
 import com.cynigasm.projects.minecraft.menus.MenuEventListener;
+import com.cynigasm.projects.minecraft.schematics.SchematicCommands;
 import com.cynigasm.projects.minecraft.social.socialListener;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -73,6 +74,7 @@ public class Project extends JavaPlugin {
 		
 		this.getCommand("social").setExecutor(new socialCommands());
 		new EmpireCommands();
+		new SchematicCommands();
 	}
 	
 	public File getConfigurationFile() {

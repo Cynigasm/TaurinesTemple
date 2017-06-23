@@ -44,7 +44,7 @@ public class EmpireMenu extends MenuInventoryHolder {
 				.addEnchantment(Enchantment.DURABILITY, 1).addItemFlags(ItemFlag.HIDE_ENCHANTS).getItem();
 		if (empire.isOwner(player.getUniqueId())) {
 			inventory.setItem(3, informationItem);
-			inventory.setItem(5, new ItemBuilder(Material.TNT).setName("&lDISBAND").setLore("&cDisband the clan. This action cannot be undone.").getItem());
+			inventory.setItem(5, new ItemBuilder(Material.TNT).setName("&lDISBAND").setLore("&cDisband the clan.", "&cThis action cannot be undone.").getItem());
 		} else {
 			inventory.setItem(4, informationItem);
 		}

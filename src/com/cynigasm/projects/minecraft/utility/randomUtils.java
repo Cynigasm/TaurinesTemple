@@ -42,11 +42,11 @@ public class randomUtils {
 		return item;
 	}
 	
-	public static void Error(String Message) {
-		Bukkit.getLogger().severe(MessageUtils.format(Message));
+	public static void Error(String message) {
+		Bukkit.getLogger().severe(MessageUtils.format(message));
 	}
 	
-	public static void NotifyPlayer(String message, Player player) {
+	public static void NotifyPlayer(String message, OfflinePlayer player) {
 		if (player.isOnline()) {
 			player.getPlayer().sendMessage(MessageUtils.format(message));
 		}

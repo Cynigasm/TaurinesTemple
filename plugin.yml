@@ -11,3 +11,8 @@ commands:
   clan:
     description: Clan manager commands
     usage: §cUsage:§f /clan | /clan create <name>
+  schematics:
+    description: Schematics manager commands
+    usage: |
+      §cUsage:§f /schematics save <name> <X1> <Y1> <Z1> <X2> <Y2> <Z2>
+      §cUsage:§f /schematics load <name>

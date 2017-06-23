@@ -6,6 +6,7 @@ import com.cynigasm.projects.minecraft.utility.MessageUtils;
 import com.cynigasm.projects.minecraft.utility.YMLConfig;
 import com.cynigasm.projects.minecraft.utility.randomUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 
 import java.io.File;
@@ -120,7 +121,8 @@ public class Empire {
 	
 	public boolean removeMember(UUID member) {
 		if (members.remove(member)) {
-			broadcastToMembers(randomUtils.getPlayerName(Bukkit.getOfflinePlayer(member), "") + "&e has left the clan!");
+			broadcastToMembers(randomUtils.getPlayerName(Bukkit.getOfflinePlayer(member), "") + "&c has left the clan!");
+			randomUtils.NotifyPlayer("&cYou have left your clan!", Bukkit.getOfflinePlayer(member));
 			return true;
 		} else {
 			return false;
@@ -142,6 +144,20 @@ public class Empire {
 			if (player.isOnline()) {
 				player.getPlayer().sendMessage(message);
 			}
+		}
+	}
+	
+	public String getRank(UUID member, boolean colored) {
+		if (isMember(member)) {
+			if (isOwner(member)) {
+				return colored ? ChatColor.RED + "Owner" : "Owner";
+			} else if (isAdmin(member)) {
+				return colored ? ChatColor.YELLOW + "Admin" : "Admin";
+			} else {
+				return colored ? ChatColor.BLUE + "Member" : "Member";
+			}
+		} else {
+			return colored ? ChatColor.GRAY + "Outsider" : "Outsider";
 		}
 	}
 	

@@ -15,25 +15,15 @@ import java.util.stream.Collectors;
 public class YMLConfig extends YamlConfiguration {
 	public YMLConfig(JavaPlugin plugin, String fileName) {
 		file = new File(plugin.getDataFolder() + File.separator + fileName);
-		if (!file.exists()) {
-			//noinspection ResultOfMethodCallIgnored
-			file.getParentFile().mkdirs();
-		}
 	}
 	
-	private File file;
-	
-	
-	
-	public void reload() {
-		if (file.exists()) {
-			try {
-				load(file);
-			} catch (IOException | InvalidConfigurationException e) {
-				e.printStackTrace();
-			}
-		}
+	public YMLConfig(File file) {
+		this.file = file;
 	}
+	
+	private final File file;
+	
+	
 	
 	public void save() {
 		try {

@@ -1,6 +1,5 @@
 package com.cynigasm.projects.minecraft.schematics;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -9,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings ("deprecation")
-public class SerializableBlock {
+public class SerializableBlock implements Pastable {
 	public SerializableBlock(Block block, Location origin) {
 		x = block.getX() - origin.getBlockX();
 		y = block.getY() - origin.getBlockY();
@@ -23,7 +22,7 @@ public class SerializableBlock {
 		y = (Integer)serialized.get("y");
 		z = (Integer)serialized.get("z");
 		material = Material.getMaterial((Integer)serialized.get("material"));
-		data = (Byte)serialized.get("data");
+		data = ((Integer)serialized.get("data")).byteValue();
 	}
 	
 	private final int x;
@@ -34,10 +33,12 @@ public class SerializableBlock {
 	
 	
 	
-	public void paste(Location relative) {
-		Block block = relative.clone().add(x, y, z).getBlock();
-		block.setType(material, false);
-		block.setData(data, false);
+	@Override
+	public void paste(Location origin) {
+		Block block = origin.clone().add(x, y, z).getBlock();
+		//block.setType(material, false);
+		//block.setData(data, false);
+		block.setTypeIdAndData(material.getId(), data, false);
 	}
 	
 	public Map<String, Object> serialize() {

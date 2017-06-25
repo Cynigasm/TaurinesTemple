@@ -11,6 +11,7 @@ import java.util.UUID;
 public class EmpireHandler {
 	public EmpireHandler() {
 		instance = this;
+		
 		empires = new HashSet<>();
 		File folder = new File(Project.getPlugin().getDataFolder() + File.separator + "empires");
 		if (folder.exists()) {
@@ -22,7 +23,10 @@ public class EmpireHandler {
 					}
 				}
 			}
+		} else {
+			folder.mkdirs();
 		}
+		
 		Bukkit.getScheduler().runTaskTimer(Project.getPlugin(), () -> {
 			for (Empire empire : empires) {
 				empire.save();

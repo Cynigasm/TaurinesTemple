@@ -8,16 +8,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class SchematicCommands implements CommandExecutor {
 	public SchematicCommands() {
 		Project.getPlugin().getCommand("schematics").setExecutor(this);
-		schematics = new HashMap<>();
 	}
-	
-	Map<String, Schematic> schematics;
 	
 	
 	
@@ -61,9 +55,9 @@ public class SchematicCommands implements CommandExecutor {
 					return true;
 				}
 			}
-			schematics.put(args[1], new Schematic(new Location(player.getWorld(), Integer.valueOf(args[2]), Integer.valueOf(args[3]), Integer.valueOf(args[4])),
-			                                      new Location(player.getWorld(), Integer.valueOf(args[5]), Integer.valueOf(args[6]), Integer.valueOf(args[7])),
-			                                      player.getLocation()));
+			SchematicHandler.setSchematic(args[1], new Schematic(new Location(player.getWorld(), Integer.valueOf(args[2]), Integer.valueOf(args[3]), Integer.valueOf(args[4])),
+			                                                     new Location(player.getWorld(), Integer.valueOf(args[5]), Integer.valueOf(args[6]), Integer.valueOf(args[7])),
+			                                                     player.getLocation().getBlock().getLocation()));
 			MessageUtils.sendFormatted(player, "&eThe schematic has been saved.");
 			return true;
 		} else {
@@ -73,9 +67,9 @@ public class SchematicCommands implements CommandExecutor {
 	
 	private boolean commandLoad(Player player, String[] args) {
 		if (args.length == 2) {
-			Schematic schematic = schematics.get(args[1]);
+			Schematic schematic = SchematicHandler.getSchematic(args[1]);
 			if (schematic != null) {
-				schematic.paste(player.getLocation());
+				schematic.paste(player.getLocation().getBlock().getLocation());
 				MessageUtils.sendFormatted(player, "&eThe schematic has been loaded.");
 			} else {
 				MessageUtils.sendFormatted(player, "&cNo schematic exists with that name!");

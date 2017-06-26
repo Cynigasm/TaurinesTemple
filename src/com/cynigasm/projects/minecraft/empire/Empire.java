@@ -28,6 +28,19 @@ public class Empire {
 		enemies = new HashSet<>();
 	}
 	
+	public Empire(String name) {
+		config = new YMLConfig(Project.getPlugin(), "empires" + File.separator + name + ".yml");
+		config.load();
+		this.name = config.getString("name");
+		level = config.getInt("level");
+		owner = config.getUUID("owner");
+		admin = config.getUUID("admin");
+		members = config.getUUIDSet("members");
+		gold = config.getDouble("gold");
+		allies = config.getStringSet("allies");
+		enemies = config.getStringSet("enemies");
+	}
+	
 	private final YMLConfig config;
 	private final String name;
 	private int level;
@@ -297,18 +310,5 @@ public class Empire {
 		config.set("allies", allies);
 		config.set("enemies", enemies);
 		config.save();
-	}
-	
-	public Empire(String name) {
-		config = new YMLConfig(Project.getPlugin(), "empires" + File.separator + name + ".yml");
-		config.load();
-		this.name = config.getString("name");
-		level = config.getInt("level");
-		owner = config.getUUID("owner");
-		admin = config.getUUID("admin");
-		members = config.getUUIDSet("members");
-		gold = config.getDouble("gold");
-		allies = config.getStringSet("allies");
-		enemies = config.getStringSet("enemies");
 	}
 }

@@ -5,10 +5,11 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings ("deprecation")
-public class SerializableBlock implements Pastable {
+public class SerializableBlock {
 	public SerializableBlock(Block block, Location origin) {
 		x = block.getX() - origin.getBlockX();
 		y = block.getY() - origin.getBlockY();
@@ -33,12 +34,17 @@ public class SerializableBlock implements Pastable {
 	
 	
 	
-	@Override
-	public void paste(Location origin) {
+	public boolean paste(Location origin, List<Block> toPutList) {
 		Block block = origin.clone().add(x, y, z).getBlock();
-		//block.setType(material, false);
-		//block.setData(data, false);
-		block.setTypeIdAndData(material.getId(), data, false);
+		boolean changed = block.setTypeIdAndData(material.getId(), data, false);
+		if (block.getType() == Material.AIR) {
+			return false;
+		}
+		if (toPutList != null) {
+			toPutList.add(block);
+			ProtectedSchematic.protect(block);
+		}
+		return changed;
 	}
 	
 	public Map<String, Object> serialize() {

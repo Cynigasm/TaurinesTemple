@@ -16,7 +16,9 @@ import java.util.UUID;
 
 public class Empire {
 	public Empire(String name, UUID owner) {
-		config = new YMLConfig(Project.getPlugin(), "empires" + File.separator + name + ".yml");
+		File file = new File(Project.getPlugin().getDataFolder() + File.separator + "empires" + File.separator + name + File.separator + "empire.yml");
+		file.getParentFile().mkdirs();
+		config = new YMLConfig(file);
 		this.name = name;
 		level = 1;
 		this.owner = owner;
@@ -29,7 +31,7 @@ public class Empire {
 	}
 	
 	public Empire(String name) {
-		config = new YMLConfig(Project.getPlugin(), "empires" + File.separator + name + ".yml");
+		config = new YMLConfig(Project.getPlugin(), "empires" + File.separator + name + File.separator + "empire.yml");
 		config.load();
 		this.name = config.getString("name");
 		level = config.getInt("level");

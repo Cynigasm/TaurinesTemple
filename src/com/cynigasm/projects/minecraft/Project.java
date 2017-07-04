@@ -14,6 +14,7 @@ import com.cynigasm.projects.minecraft.listeners.onDropEvent;
 import com.cynigasm.projects.minecraft.listeners.onPlayerJoin;
 import com.cynigasm.projects.minecraft.listeners.onPlayerQuit;
 import com.cynigasm.projects.minecraft.menus.MenuEventListener;
+import com.cynigasm.projects.minecraft.schematics.ProtectedSchematicListener;
 import com.cynigasm.projects.minecraft.schematics.SchematicCommands;
 import com.cynigasm.projects.minecraft.schematics.SchematicHandler;
 import com.cynigasm.projects.minecraft.social.socialListener;
@@ -77,6 +78,7 @@ public class Project extends JavaPlugin {
 		this.getCommand("social").setExecutor(new socialCommands());
 		new EmpireCommands();
 		new SchematicCommands();
+		new ProtectedSchematicListener();
 	}
 	
 	public File getConfigurationFile() {

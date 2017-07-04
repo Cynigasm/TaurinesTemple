@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings ("deprecation")
-public class SerializableEntity implements Pastable {
+public class SerializableEntity {
 	public SerializableEntity(Entity entity, Location origin) {
 		x = entity.getLocation().getX() - origin.getX();
 		y = entity.getLocation().getY() - origin.getY();
@@ -64,36 +64,49 @@ public class SerializableEntity implements Pastable {
 	
 	
 	
-	@Override
-	public void paste(Location origin) {
-		Location clone = origin.clone().add(x, y, z);
-		clone.setPitch(pitch);
-		clone.setYaw(yaw);
-		Entity entity = origin.getWorld().spawnEntity(clone, type);
+	public Entity paste(Location origin) {
+		Entity entity;
 		
-		switch (type) {
-			case ARMOR_STAND:
-				ArmorStand armorStand = (ArmorStand)entity;
-				armorStand.setBoots(BukkitObjectBase64.fromBase64((String)data.get("boots")));
-				armorStand.setLeggings(BukkitObjectBase64.fromBase64((String)data.get("leggings")));
-				armorStand.setChestplate(BukkitObjectBase64.fromBase64((String)data.get("chestplate")));
-				armorStand.setHelmet(BukkitObjectBase64.fromBase64((String)data.get("helmet")));
-				break;
-			case ITEM_FRAME: //TODO doesn't work, some problem with the coordinate
-				ItemFrame itemFrame = (ItemFrame)entity;
-				itemFrame.setItem(BukkitObjectBase64.fromBase64((String)data.get("item")));
-				itemFrame.setRotation(Rotation.valueOf((String)data.get("rotation")));
-				itemFrame.setFacingDirection(BlockFace.valueOf((String)data.get("facing")), false);
-				break;
-			case PAINTING: //TODO doesn't work
-				Painting painting = ((Painting)entity);
-				BlockFace facing = BlockFace.valueOf((String)data.get("facing"));
-				Art art = Art.getById((Integer)data.get("art"));
-				//painting.teleport(calculatePaintingLocation(art, facing, painting.getLocation().getBlock().getLocation()));
-				painting.setFacingDirection(facing, false);
-				painting.setArt(art, false);
-				break;
+		if (type == EntityType.ITEM_FRAME || type == EntityType.PAINTING) {
+			Location clone = origin.clone().add(x, y, z).getBlock().getLocation();
+			clone.setPitch(pitch);
+			clone.setYaw(yaw);
+			entity = origin.getWorld().spawnEntity(clone, type);
+			
+			switch (type) {
+				case ITEM_FRAME:
+					ItemFrame itemFrame = (ItemFrame)entity;
+					itemFrame.setItem(BukkitObjectBase64.fromBase64((String)data.get("item")));
+					itemFrame.setRotation(Rotation.valueOf((String)data.get("rotation")));
+					itemFrame.setFacingDirection(BlockFace.valueOf((String)data.get("facing")), false);
+					break;
+				case PAINTING:
+					Painting painting = ((Painting)entity);
+					Art art = Art.getById((Integer)data.get("art"));
+					BlockFace facing = BlockFace.valueOf((String)data.get("facing"));
+					painting.teleport(calculatePaintingLocation(art, facing, clone));
+					painting.setArt(art, false);
+					painting.setFacingDirection(facing, false);
+					break;
+			}
+		} else {
+			Location clone = origin.clone().add(x, y, z);
+			clone.setPitch(pitch);
+			clone.setYaw(yaw);
+			entity = origin.getWorld().spawnEntity(clone, type);
+			
+			switch (type) {
+				case ARMOR_STAND:
+					ArmorStand armorStand = (ArmorStand)entity;
+					armorStand.setBoots(BukkitObjectBase64.fromBase64((String)data.get("boots")));
+					armorStand.setLeggings(BukkitObjectBase64.fromBase64((String)data.get("leggings")));
+					armorStand.setChestplate(BukkitObjectBase64.fromBase64((String)data.get("chestplate")));
+					armorStand.setHelmet(BukkitObjectBase64.fromBase64((String)data.get("helmet")));
+					break;
+			}
 		}
+		
+		return entity;
 	}
 	
 	public Map<String, Object> serialize() {
@@ -122,7 +135,7 @@ public class SerializableEntity implements Pastable {
 				return location; // No calculation needed.
 			case GRAHAM: // 1x2
 			case WANDERER:
-				return location.getBlock().getLocation().add(0, -1, 0);
+				return location.add(0, -1, 0);
 			case CREEBET: // 2x1
 			case COURBET:
 			case POOL:
@@ -131,9 +144,9 @@ public class SerializableEntity implements Pastable {
 			case DONKEYKONG: // 4x3
 			case SKELETON:
 				if (facing == BlockFace.WEST) {
-					return location.getBlock().getLocation().add(0, 0, -1);
+					return location.add(0, 0, -1);
 				} else if (facing == BlockFace.SOUTH) {
-					return location.getBlock().getLocation().add(-1, 0, 0);
+					return location.add(-1, 0, 0);
 				} else {
 					return location;
 				}
@@ -148,9 +161,9 @@ public class SerializableEntity implements Pastable {
 			case PIGSCENE:
 			case POINTER:
 				if (facing == BlockFace.WEST) {
-					return location.getBlock().getLocation().add(0, -1, -1);
+					return location.add(0, -1, -1);
 				} else if (facing == BlockFace.SOUTH) {
-					return location.getBlock().getLocation().add(-1, -1, 0);
+					return location.add(-1, -1, 0);
 				} else {
 					return location.add(0, -1, 0);
 				}

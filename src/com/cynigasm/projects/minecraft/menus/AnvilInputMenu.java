@@ -10,10 +10,11 @@ import org.bukkit.inventory.AnvilInventory;
 
 import java.util.function.Consumer;
 
-public class AnvilInputMenu extends MenuInventoryHolder { //TODO test this class
+public class AnvilInputMenu extends MenuInventoryHolder { //TODO probably doesn't work: https://www.spigotmc.org/threads/access-the-renametext-from-a-custom-anvil-gui.252554/#post-2512490
 	public AnvilInputMenu(Player player, Consumer<String> resultConsumer) {
 		AnvilInventory inventory = (AnvilInventory)Bukkit.createInventory(this, InventoryType.ANVIL); //TODO title?
 		//TODO default text
+		//TODO an item has to be inside
 		player.openInventory(inventory);
 		this.resultConsumer = resultConsumer;
 	}

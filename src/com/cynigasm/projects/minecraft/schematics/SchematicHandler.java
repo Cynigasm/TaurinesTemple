@@ -7,31 +7,17 @@ import java.io.File;
 
 public class SchematicHandler {
 	public SchematicHandler() {
-		//instance = this;
-		
-		//schematics = new HashMap<>();
 		File folder = new File(Project.getPlugin().getDataFolder() + File.separator + "schematics");
-		if (folder.exists()) {
-			/*File[] files = folder.listFiles();
-			if (files != null) {
-				for (File file : files) {
-					if (file.getName().endsWith(".yml")) {
-						schematics.put(file.getName().substring(file.getName().length() - 4), new Schematic());
-					}
-				}
-			}*/
-		} else {
+		if (!folder.exists()) {
 			folder.mkdirs();
 		}
 	}
 	
-	//private static SchematicHandler instance = null;
-	//private final Map<String, Schematic> schematics;
+	//
 	
 	
 	
 	public static Schematic getSchematic(String name) {
-		//return instance.schematics.get(name);
 		File file = new File(Project.getPlugin().getDataFolder() + File.separator + "schematics" + File.separator + name + ".yml");
 		if (file.exists()) {
 			YMLConfig config = new YMLConfig(file);
@@ -43,7 +29,6 @@ public class SchematicHandler {
 	}
 	
 	public static void setSchematic(String name, Schematic schematic) {
-		//instance.schematics.put(name, schematic);
 		YMLConfig config = new YMLConfig(Project.getPlugin(), "schematics" + File.separator + name + ".yml");
 		schematic.serialize().entrySet().forEach((entry) -> config.set(entry.getKey(), entry.getValue()));
 		config.save();

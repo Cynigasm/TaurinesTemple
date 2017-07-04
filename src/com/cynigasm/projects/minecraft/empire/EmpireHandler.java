@@ -1,6 +1,7 @@
 package com.cynigasm.projects.minecraft.empire;
 
 import com.cynigasm.projects.minecraft.Project;
+import com.cynigasm.projects.minecraft.schematics.ProtectedSchematic;
 import org.bukkit.Bukkit;
 
 import java.io.File;
@@ -13,18 +14,24 @@ public class EmpireHandler {
 		instance = this;
 		
 		empires = new HashSet<>();
-		File folder = new File(Project.getPlugin().getDataFolder() + File.separator + "empires");
-		if (folder.exists()) {
-			File[] files = folder.listFiles();
-			if (files != null) {
-				for (File file : files) {
-					if (file.getName().endsWith(".yml")) {
-						empires.add(new Empire(file.getName().substring(0, file.getName().length() - 4)));
+		File root = new File(Project.getPlugin().getDataFolder() + File.separator + "empires");
+		if (root.exists()) {
+			File[] folders = root.listFiles();
+			if (folders != null) {
+				for (File folder : folders) {
+					empires.add(new Empire(folder.getName()));
+					File[] files = folder.listFiles();
+					if (files != null) {
+						for (File file : files) {
+							if (file.getName().endsWith(".ps.yml")) {
+								ProtectedSchematic.load(file);
+							}
+						}
 					}
 				}
 			}
 		} else {
-			folder.mkdirs();
+			root.mkdirs();
 		}
 		
 		Bukkit.getScheduler().runTaskTimer(Project.getPlugin(), () -> {

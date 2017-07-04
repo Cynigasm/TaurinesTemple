@@ -96,11 +96,41 @@ public class Schematic {
 	private final List<SerializableBlock> dependentBlocks;
 	private final List<SerializableEntity> entities;
 	private BukkitTask pastingTask;
+	private List<Block> pastedBlocks = null;
+	private List<Entity> pastedEntities = null;
 	
 	
 	
-	public void paste(Location origin) { //At the moment, pasting air to the location of an air blocks takes one tick as well
-		pasteOneByOne(origin, blocks, () -> pasteOneByOne(origin, dependentBlocks, () -> pasteOneByOne(origin, entities, () -> {})));
+	public void paste(Location origin, Runnable whenDone, boolean protectPasted) {
+		pastedBlocks = protectPasted ? new ArrayList<>() : null;
+		pastedEntities = protectPasted ? new ArrayList<>() : null;
+		
+		pasteBlocksOneByOne(origin, new ArrayList<>(blocks), () -> pasteBlocksOneByOne(origin, new ArrayList<>(dependentBlocks), () -> {
+			Bukkit.getScheduler().runTask(Project.getPlugin(), () -> {
+				for (SerializableEntity entity : entities) {
+					Entity pasted = entity.paste(origin);
+					if (protectPasted) {
+						pastedEntities.add(pasted);
+						ProtectedSchematic.protect(pasted);
+					}
+				}
+				if (whenDone != null) {
+					whenDone.run();
+				}
+			});
+		}));
+	}
+	
+	public List<Block> takePastedBlocks() {
+		List<Block> temp = pastedBlocks;
+		pastedBlocks = null;
+		return temp;
+	}
+	
+	public List<Entity> takePastedEntities() {
+		List<Entity> temp = pastedEntities;
+		pastedEntities = null;
+		return temp;
 	}
 	
 	public Map<String, Object> serialize() {
@@ -113,46 +143,22 @@ public class Schematic {
 	
 	
 	
-	//This method "destroys" the lists
-	private void pasteOneByOne(Location origin, List<? extends Pastable> pastableList, Runnable whenReady) {
+	//This method "destroys" the list
+	private void pasteBlocksOneByOne(Location origin, List<SerializableBlock> blocks, Runnable whenReady) {
 		pastingTask = Bukkit.getScheduler().runTaskTimer(Project.getPlugin(), () -> {
-			if (pastableList.size() > 0) {
-				pastableList.remove(0).paste(origin);
-			} else {
+			while (true) {
+				if (!pasteBlocksLooped(origin, blocks)) {
+					break;
+				}
+			}
+			if (blocks.size() == 0) {
 				pastingTask.cancel();
 				whenReady.run();
 			}
 		}, 0, 1);
 	}
 	
-	
-	/*public static Set<Chunk> getChunks(Chunk firstChunk, Chunk secondChunk) {
-		int minChunkX;
-		int maxChunkX;
-		if (firstChunk.getX() < secondChunk.getX()) {
-			minChunkX = firstChunk.getX();
-			maxChunkX = secondChunk.getX();
-		} else {
-			minChunkX = secondChunk.getX();
-			maxChunkX = firstChunk.getX();
-		}
-		
-		int minChunkZ;
-		int maxChunkZ;
-		if (firstChunk.getZ() < secondChunk.getZ()) {
-			minChunkZ = firstChunk.getZ();
-			maxChunkZ = secondChunk.getZ();
-		} else {
-			minChunkZ = secondChunk.getZ();
-			maxChunkZ = firstChunk.getZ();
-		}
-		
-		Set<Chunk> chunks = new HashSet<>();
-		for (int x = minChunkX; x < maxChunkX; x++) {
-			for (int z = minChunkZ; z < maxChunkZ; z++) {
-				chunks.add(firstChunk.getWorld().getChunkAt(x, z));
-			}
-		}
-		return chunks;
-	}*/
+	private boolean pasteBlocksLooped(Location origin, List<SerializableBlock> blocks) {
+		return blocks.size() > 0 && blocks.remove(0).paste(origin, pastedBlocks);
+	}
 }

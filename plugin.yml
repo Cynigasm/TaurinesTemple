@@ -16,3 +16,4 @@ commands:
     usage: |
       §cUsage:§f /schematics save <name> <X1> <Y1> <Z1> <X2> <Y2> <Z2>
       §cUsage:§f /schematics load <name>
+      §cUsage:§f /schematics load <empire> <name>

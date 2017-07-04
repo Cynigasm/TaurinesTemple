@@ -1,6 +1,8 @@
 package com.cynigasm.projects.minecraft.schematics;
 
 import com.cynigasm.projects.minecraft.Project;
+import com.cynigasm.projects.minecraft.empire.Empire;
+import com.cynigasm.projects.minecraft.empire.EmpireHandler;
 import com.cynigasm.projects.minecraft.utility.MessageUtils;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -69,10 +71,26 @@ public class SchematicCommands implements CommandExecutor {
 		if (args.length == 2) {
 			Schematic schematic = SchematicHandler.getSchematic(args[1]);
 			if (schematic != null) {
-				schematic.paste(player.getLocation().getBlock().getLocation());
+				schematic.paste(player.getLocation().getBlock().getLocation(), null, false);
 				MessageUtils.sendFormatted(player, "&eThe schematic has been loaded.");
 			} else {
 				MessageUtils.sendFormatted(player, "&cNo schematic exists with that name!");
+			}
+			return true;
+		} else if (args.length == 3) {
+			Empire empire = EmpireHandler.getEmpire(args[1]);
+			if (empire != null) {
+				Schematic schematic = SchematicHandler.getSchematic(args[2]);
+				if (schematic != null) {
+					schematic.paste(player.getLocation().getBlock().getLocation(), () -> {
+						ProtectedSchematic.create(args[1], args[2], player.getWorld(), schematic.takePastedBlocks(), schematic.takePastedEntities());
+					}, true);
+					MessageUtils.sendFormatted(player, "&eThe schematic has been loaded for the specified empire.");
+				} else {
+					MessageUtils.sendFormatted(player, "&cNo schematic exists with that name!");
+				}
+			} else {
+				MessageUtils.sendFormatted(player, "&cNo empire exists with that name!");
 			}
 			return true;
 		} else {
